@@ -1,39 +1,26 @@
 const http = require('http');
 const app = require('./index');
 
-const PORT = 3000;
+const server = http.createServer(app);
 
-const server = app.listen(PORT, () => {
-  console.log('Running tests...');
-});
+server.listen(0, async () => {
+  const port = server.address().port;
 
-const options = {
-  hostname: 'localhost',
-  port: PORT,
-  path: '/status',
-  method: 'GET'
-};
+  try {
+    const res = await fetch(`http://localhost:${port}/status`);
+    const data = await res.json();
 
-const req = http.request(options, (res) => {
-  let data = '';
-
-  res.on('data', chunk => data += chunk);
-  res.on('end', () => {
-    const json = JSON.parse(data);
-
-    if (json.status === 'ok') {
+    if (data.status === 'ok') {
       console.log('✓ Status endpoint test passed');
-      server.close(() => process.exit(0));
+      process.exit(0);
     } else {
       console.error('✗ Status endpoint test failed');
-      server.close(() => process.exit(1));
+      process.exit(1);
     }
-  });
+  } catch (err) {
+    console.error('✗ Request failed', err);
+    process.exit(1);
+  } finally {
+    server.close();
+  }
 });
-
-req.on('error', (err) => {
-  console.error(err);
-  server.close(() => process.exit(1));
-});
-
-req.end();

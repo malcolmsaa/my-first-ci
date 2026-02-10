@@ -1,15 +1,17 @@
 const express = require('express');
 const app = express();
 
+const PORT = process.env.PORT || 3000;
+
 app.get('/status', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-module.exports = app;
-
+// 👇 Starta bara servern om index.js körs direkt
 if (require.main === module) {
-  const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
 }
+
+module.exports = app;
