@@ -1,17 +1,15 @@
-const express = require("express");
+const express = require('express');
 const app = express();
 
-const PORT = process.env.PORT || 3000;
-
-app.get("/status", (req, res) => {
-  res.json({ status: "ok" });
+app.get('/status', (req, res) => {
+  res.json({ status: 'ok' });
 });
 
-// Export app för test
+module.exports = app;
+
 if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
 }
-
-module.exports = app;
