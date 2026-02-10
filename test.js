@@ -1,42 +1,26 @@
-const http = require('http');
+const http = require("http");
+const app = require("./index");
 
-const options = {
-  hostname: 'localhost',
-  port: 3000,
-  path: '/status',
-  method: 'GET'
-};
+const server = app.listen(3000, () => {
+  console.log("Running tests...");
 
-console.log('Running tests...');
+  http.get("http://localhost:3000/status", (res) => {
+    let data = "";
 
-const req = http.request(options, (res) => {
-  let data = '';
-
-  res.on('data', (chunk) => {
-    data += chunk;
-  });
-
-  res.on('end', () => {
-    try {
+    res.on("data", chunk => data += chunk);
+    res.on("end", () => {
       const json = JSON.parse(data);
 
-      if (json.status === 'ok') {
-        console.log('✓ Status endpoint test passed');
-        process.exit(0); // ✅ VIKTIGT
+      if (json.status === "ok") {
+        console.log("✓ Status endpoint test passed");
+        server.close(() => process.exit(0));
       } else {
-        console.error('✗ Status endpoint test failed');
-        process.exit(1);
+        console.error("✗ Status endpoint test failed");
+        server.close(() => process.exit(1));
       }
-    } catch (err) {
-      console.error('✗ Invalid JSON response');
-      process.exit(1);
-    }
+    });
+  }).on("error", (err) => {
+    console.error("✗ Request failed", err);
+    server.close(() => process.exit(1));
   });
 });
-
-req.on('error', (error) => {
-  console.error('✗ Request failed', error);
-  process.exit(1);
-});
-
-req.end();
