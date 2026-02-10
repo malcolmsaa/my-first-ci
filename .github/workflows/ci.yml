@@ -1,4 +1,4 @@
-name: Node CI
+kname: Node CI
 
 on:
   push:
@@ -21,6 +21,11 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+
+      - name: Start server
+        run: |
+          node index.js &
+          sleep 2
 
       - name: Run tests
         run: npm test
