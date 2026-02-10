@@ -2,9 +2,9 @@ name: Node CI
 
 on:
   push:
-    branches: ["main"]
+    branches: [ "main" ]
   pull_request:
-    branches: ["main"]
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -24,3 +24,10 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+      - name: Run Trivy security scan
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          severity: HIGH,CRITICAL
