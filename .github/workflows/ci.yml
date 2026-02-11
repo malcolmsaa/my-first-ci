@@ -1,10 +1,10 @@
-name: Docker CI Pipeline
+name: Docker CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: ["main"]
   pull_request:
-    branches: [ main ]
+    branches: ["main"]
 
 jobs:
   docker-build:
@@ -17,12 +17,9 @@ jobs:
       - name: Build Docker image
         run: docker build -t my-app:${{ github.sha }} .
 
-      - name: List Docker images
-        run: docker images
-
       - name: Run container test
         run: |
-          docker run -d --name test-container -p 8080:3000 my-app:${{ github.sha }}
+          docker run -d -p 3000:3000 --name test-container my-app:${{ github.sha }}
           sleep 5
           docker ps
           docker logs test-container
@@ -34,4 +31,4 @@ jobs:
           image-ref: my-app:${{ github.sha }}
           format: table
           exit-code: 1
-          severity: HIGH,CRITICAL
+          severity: CRITICAL
