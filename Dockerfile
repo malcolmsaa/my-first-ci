@@ -1,12 +1,11 @@
-FROM node:20-alpine
-
+FROM node:22-alpine AS builder
 WORKDIR /app
-
 COPY package*.json ./
-RUN npm install
-
+RUN npm ci --omit=dev
 COPY . .
 
-EXPOSE 3000
-
-CMD ["node", "index.js"]
+FROM gcr.io/distroless/nodejs22-debian12
+WORKDIR /app
+COPY --from=builder /app /app
+USER 1000
+CMD ["index.js"]
